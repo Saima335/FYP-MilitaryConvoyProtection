@@ -15,6 +15,8 @@ dnspython==2.2.1
 flatbuffers==22.10.26
 fonttools==4.38.0
 gast==0.4.0
+geographiclib==2.0
+geopy==2.3.0
 google-auth==2.14.0
 google-auth-oauthlib==0.4.6
 google-pasta==0.2.0
