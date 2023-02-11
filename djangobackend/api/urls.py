@@ -9,4 +9,8 @@ urlpatterns =[
     path('detect2/',views.Detection2),
     path('risk/',views.Risk),
     path('hotspot/',views.Hotspot),
+    path('hotspotkmean/',views.HotspotKMean),
+    path('landminekmean/',views.HotspotKMean),
+    path('riskarea/',views.RiskArea),
+    path('riskpath/',views.RiskPath),
 ]

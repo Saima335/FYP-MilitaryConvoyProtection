@@ -28,7 +28,7 @@ const MainScreen = ({ navigation, route }) => {
     const [marker, setMarker] = useState({});
     const [curr, setCurr] = useState({});
     const [coordinate, setCoordinate] = useState({});
-    var call=0;
+    var call = 0;
     const markers = [{
         latlng: {
             latitude: 30.3753,
@@ -50,7 +50,7 @@ const MainScreen = ({ navigation, route }) => {
         latitude: Math.round(JSON.parse(route.params.destinationCoordinates).lat * 10000) / 10000,
         longitude: Math.round(JSON.parse(route.params.destinationCoordinates).lng * 10000) / 10000,
     };
-    const destination=(Math.round(JSON.parse(route.params.destinationCoordinates).lat * 10000) / 10000)+","+(Math.round(JSON.parse(route.params.destinationCoordinates).lng * 10000) / 10000);
+    const destination = (Math.round(JSON.parse(route.params.destinationCoordinates).lat * 10000) / 10000) + "," + (Math.round(JSON.parse(route.params.destinationCoordinates).lng * 10000) / 10000);
 
     const placebetween = {
         latitude: 31.75069, longitude: 73.98471
@@ -87,17 +87,17 @@ const MainScreen = ({ navigation, route }) => {
 
     async function requestPermissions() {
         try {
-            if(Platform.OS==='ios'){
-                try{
-                    const permissionStatus=await Geolocation.requestAuthorization('whenInUse');
-                    if(permissionStatus==='granted'){
+            if (Platform.OS === 'ios') {
+                try {
+                    const permissionStatus = await Geolocation.requestAuthorization('whenInUse');
+                    if (permissionStatus === 'granted') {
                         console.log('accessed location');
                     }
                     else {
                         console.log('location permission denied');
                     }
                 }
-                catch(error){
+                catch (error) {
                     console.warn(err);
                 }
             }
@@ -107,13 +107,13 @@ const MainScreen = ({ navigation, route }) => {
             if (granted === PermissionsAndroid.RESULTS.GRANTED) {
                 console.log('accessed location');
                 Geolocation.getCurrentPosition(
-                    (position)=>{
-                        const cords={
+                    (position) => {
+                        const cords = {
                             latitude: position.coords.latitude,
                             longitude: position.coords.longitude,
                         };
-                        if(call==0){
-                            const source=cords.latitude+","+cords.longitude;
+                        if (call == 0) {
+                            const source = cords.latitude + "," + cords.longitude;
                             getRoutesFromApiAsync(source, destination);
                         }
                         call++;
@@ -126,13 +126,13 @@ const MainScreen = ({ navigation, route }) => {
                             longitudeDelta: 0.0567,
                         }))
                     },
-                    (error)=>{
+                    (error) => {
                         console.log(error);
                     },
                     { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
                 );
-                
-            } else {   
+
+            } else {
                 console.log('location permission denied');
             }
         } catch (err) {
@@ -151,7 +151,22 @@ const MainScreen = ({ navigation, route }) => {
         }
     }
 
-    React.useEffect(()=>{
+    const getRiskPathFromApiAsync = async (areas) => {
+        try {
+            const response = await fetch(
+                'http://localhost:8000/api/riskpath/?areas=' + areas,
+            );
+            const objperson = await JSON.parse(JSON.stringify(response));
+            // console.log("Response in json: ",objperson);
+            // console.log("Status: ",response.status);
+            console.log("Result from api: ", objperson.headers.map.result);
+            return Number(objperson.headers.map.result);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    React.useEffect(() => {
         setCoordinate(new AnimatedRegion({
             latitude: 33.6844,
             longitude: 73.0479,
@@ -163,7 +178,7 @@ const MainScreen = ({ navigation, route }) => {
         //     requestPermissions();
         // },6000);
         // return ()=>clearInterval(interval)
-    },[]);
+    }, []);
 
     // React.useEffect(() => {
     //     setMarker(placebetween);
@@ -184,36 +199,13 @@ const MainScreen = ({ navigation, route }) => {
     const API_KEY = "AIzaSyAoJNvyfx5Gtg5v4B-NAD8bcLUbXScHxwk";
     const [routes, setRoutes] = useState({});
 
-    const getRandomColor = ["red", "green", "blue", "black", "yellow", "white", "gray",
-        "red", "green", "blue", "black", "yellow", "white", "gray",
-        "red", "green", "blue", "black", "yellow", "white", "gray",
-        "red", "green", "blue", "black", "yellow", "white", "gray",
-        "red", "green", "blue", "black", "yellow", "white", "gray",
-        "red", "green", "blue", "black", "yellow", "white", "gray",
-        "red", "green", "blue", "black", "yellow", "white", "gray",
-        "red", "green", "blue", "black", "yellow", "white", "gray",
-        "red", "green", "blue", "black", "yellow", "white", "gray",
-        "red", "green", "blue", "black", "yellow", "white", "gray",
-        "red", "green", "blue", "black", "yellow", "white", "gray",
-        "red", "green", "blue", "black", "yellow", "white", "gray",
-        "red", "green", "blue", "black", "yellow", "white", "gray",
-        "red", "green", "blue", "black", "yellow", "white", "gray",
-        "red", "green", "blue", "black", "yellow", "white", "gray",
-        "red", "green", "blue", "black", "yellow", "white", "gray",
-        "red", "green", "blue", "black", "yellow", "white", "gray",
-        "red", "green", "blue", "black", "yellow", "white", "gray",
-        "red", "green", "blue", "black", "yellow", "white", "gray",
-        "red", "green", "blue", "black", "yellow", "white", "gray",
-        "red", "green", "blue", "black", "yellow", "white", "gray",
-        "red", "green", "blue", "black", "yellow", "white", "gray",
-        "red", "green", "blue", "black", "yellow", "white", "gray",
-        "red", "green", "blue", "black", "yellow", "white", "gray",
-        "red", "green", "blue", "black", "yellow", "white", "gray",
-        "red", "green", "blue", "black", "yellow", "white", "gray",
-        "red", "green", "blue", "black", "yellow", "white", "gray",
-        "red", "green", "blue", "black", "yellow", "white", "gray"];
+    const [riskpathcolor, setRiskpathcolor] = useState({});
+
+    const getRandomColor = ["red", "gray", "yellow", "blue", "white", "green"];
+    var riskpath = [];
     let multiDirectionPolygonArray = [];
     const [arr, setArr] = useState([]);
+    const [risk, setRisk] = useState([]);
 
     const decode = encoded => {
         var points = [];
@@ -247,7 +239,7 @@ const MainScreen = ({ navigation, route }) => {
         return points;
     };
 
-    const getRoutesFromApiAsync = async (source,destination) => {
+    const getRoutesFromApiAsync = async (source, destination) => {
         try {
             const response = await fetch(
                 `https://maps.googleapis.com/maps/api/directions/json?origin=${source}&destination=${destination}&key=${API_KEY}&sensor=false&alternatives=true`,
@@ -267,25 +259,77 @@ const MainScreen = ({ navigation, route }) => {
                 });
             multiDirectionPolygonArray.map((marker, index) => {
                 marker.map(mrk => {
-                    console.log("Marker",mrk);
+                    console.log("Marker", mrk);
                     mrk.map(point => {
-                        point['latitude']=point['lat']
+                        point['latitude'] = point['lat']
                         delete point['lat']
-                        point['longitude']=point['lng']
+                        point['longitude'] = point['lng']
                         delete point['lng']
                     })
                 })
             })
             console.log(".......", multiDirectionPolygonArray);
+            var areasall=[];
+            multiDirectionPolygonArray.forEach( (marker, index) => {
+                var areas = [];
+                var ai = 0;
+                marker.forEach((mrk, i) => {
+                    mrk.every((point, j) => {
+                        areas[ai] = [point['latitude'], point['longitude']];
+                        ai++;
+                        // const response = await Geocoder.from(point['latitude'], point['longitude']);
+                        // var addressComponent = response.results[0].address_components[1]?.long_name;
+                        // if (addressComponent) {
+                        //     console.log("latLng Geocoder", ai, "    ", addressComponent);
+                        //     areas[ai] = addressComponent;
+                        //     ai++;
+                        // }
+                        if (j == 0) {
+                            return false;
+                        }
+                    });
+                });
+                console.log("Areas to pass: ", areas);
+                areasall.push(areas);
+            });
+            for (var z=0;z<areasall.length;z++) {
+                for (var y=0;y<areasall[z].length;y++) {
+                    const response = await Geocoder.from(areasall[z][y][0], areasall[z][y][1]);
+                    var addressComponent = response.results[0].address_components[1]?.long_name;
+                    if (addressComponent) {
+                        console.log("latLng Geocoder", addressComponent);
+                        areasall[z][y] = addressComponent;
+                    }
+                }
+            }
+            // areasall=[['Islamabad', 'Islamabad', 'H-9', 'شاہراہ کشمیر،', 'Islamabad', 'Shaheenabad', 'Shaheenabad', 'Band Road', 'Gulfishan Colony', 'Lahore', 'Multan Road', 'Chauburji Chowk', 'Saadi Park', 'Saadi Park', 'Mozang Chungi', 'Jubilee Town', 'MRC', 'Main Gulberg', 'Main Gulberg', 'Block K', 'Mushtaq Ahmed Gurmani Road', 'Gurumangat Road'],['Islamabad', 'Islamabad', 'G-9/4', 'Service Road East G 9', 'Service Road East G 9', 'G 8/2', '4/C', 'G 8/1', 'فیصل ایونیو', 'G-7/1', 'Islamabad', 'Kallar Syedan Road', 'Bhalot Link Road', 'Jhelum Cantt', 'Grand Trunk Road', 'National Highway 5', 'National Highway 5', 'Kala Shah Kaku', 'Balkhay', 'Lakhodher', 'Cantt', 'GCQG 8JW', 'Aziz Bhatti Road', 'Cantt', 'Cantt', 'Sarwar Colony', 'CMA Colony',
+            // 'Millat Colony', 'Gurumangat Road']];
+            for (var z=0;z<areasall.length;z++) {
+                riskpath[z]=await getRiskPathFromApiAsync(JSON.stringify(areasall[z]));
+            }
+            setRisk(riskpath);
+            var riskpath1 = [...riskpath].sort(function (a, b) { return a - b });
+            console.log("Risk of the paths: ", riskpath[0], "     ", riskpath[1]);
+            for (var k = 0; k < riskpath1.length; k++) {
+                var index = riskpath.indexOf(riskpath1[k]);
+                riskpath[index] = getRandomColor[k];
+                if (k == riskpath1.length - 1) {
+                    riskpath[index] = "green";
+                }
+            }
+            console.log(riskpath);
+            setRiskpathcolor(riskpath);
             setArr(multiDirectionPolygonArray);
+            // getRandomColor[riskpath.indexOf(Math.max(...riskpath))] = "green";
+            // getRandomColor[riskpath.indexOf(Math.min(...riskpath))] = "red";
         } catch (error) {
             console.error(error);
         }
     };
 
-    // React.useEffect(() => {
-    //     getRoutesFromApiAsync();
-    // }, [])
+    React.useEffect(() => {
+        getRoutesFromApiAsync();
+    }, [])
     return (
         <View>
             <MapView
@@ -306,25 +350,27 @@ const MainScreen = ({ navigation, route }) => {
                         [40.773941, -74.12544]
                     ]}
                 /> */}
-                <Marker.Animated coordinate={coordinate} ref={markerRef}/>
+                <Marker.Animated coordinate={coordinate} ref={markerRef} />
                 <Marker coordinate={destinationCoordinates} />
                 {mapRef.current?.fitToCoordinates([curr, destinationCoordinates], { edgePadding })}
                 {arr &&
-                        arr.map((marker, index) =>
-                            marker.map(mrk => (
-                                <Polyline
-                                    coordinates={mrk}
-                                    strokeWidth={6}
-                                    strokeColor={getRandomColor[index + 1]}
-                                    geodesic={true}
-                                    // options={{
-                                    //     strokeColor: getRandomColor[index + 1],
-                                    //     strokeOpacity: 1,
-                                    //     strokeWeight: 4
-                                    // }}
-                                />
-                            ))
-                        )}
+                    arr.map((marker, index) =>
+                        marker.map(mrk => (
+                            <Polyline
+                                coordinates={mrk}
+                                strokeWidth={6}
+                                strokeColor={riskpathcolor[index]}
+                                geodesic={true}
+                                tappable={true}
+                                onPress={() => { (<View>{risk[index]}</View>) }}
+                            // options={{
+                            //     strokeColor: getRandomColor[index + 1],
+                            //     strokeOpacity: 1,
+                            //     strokeWeight: 4
+                            // }}
+                            />
+                        ))
+                    )}
                 {/* <MapViewDirections
                     origin={sourceCoordinates}
                     destination={placebetween}
@@ -386,6 +432,9 @@ const MainScreen = ({ navigation, route }) => {
                     strokeWidth={6}
                 /> */}
             </MapView>
+            <View style={{ flexDirection: "row", position: 'absolute', bottom: 50, }}>
+                {risk.map(r => (<Text style={{ color: "black" }}>{r + "     "}</Text>))}
+            </View>
             <Video
                 source={require('./persondrone.mp4')}
                 shouldPlay={true}

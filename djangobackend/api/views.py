@@ -29,12 +29,17 @@ import os
 
 import pandas as pd
 import statsmodels.api as sm
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt # for data visualization
 import seaborn as sns
 import csv
 sns.set()
 from sklearn.cluster import KMeans
 import plotly.express as px
+from geopy.geocoders import Nominatim
+from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import MinMaxScaler
+
+import json
 
 # Create your views here.
 class DetectionList(ListAPIView):
@@ -374,6 +379,7 @@ def Detection2(request):
     return HttpResponse("Done Processing")
 
 def Hotspot(request):
+    geolocator=Nominatim(user_agent="geoapiExercises")
     data = pd.read_csv('D:\FYP\Implementation\connectReactnativeDjango\djangobackend\FinalattackData.csv')
     #print(data)
     #print(data)
@@ -441,3 +447,242 @@ def Risk(request):
     result.append(FutureOccurence)
     print(result)
     return HttpResponse(headers={'Result':result})
+
+def HotspotKMean(request):
+    # filtering the rows where Credit-Rating is Fair
+    data = pd.read_csv("D:\FYP\Implementation\connectReactnativeDjango\djangobackend\globalterrorismdb_0718dist.csv",encoding='latin-1')
+    data.drop(['iyear','imonth','iday','suicide'], axis=1, inplace=True)
+    #print(data.isnull().sum()
+    data=data[data['country_txt'].str.contains('Pakistan')]
+
+    #print(data)
+    data['latitude'].fillna(data['latitude'].mean(), inplace=True)
+    data['longitude'].fillna(data['longitude'].mean(), inplace=True)
+    X = data.iloc[:,[2,3]].values
+    wcss=[]
+    for i in range (1,11):
+        kmeans = KMeans(n_clusters = i, init = 'k-means++', max_iter =300, n_init = 10, random_state = 0)
+        kmeans.fit(X)
+        wcss.append(kmeans.inertia_)
+
+    # Plot the graph to visualize the Elbow Method to find the optimal number of cluster  
+    # plt.plot(range(1,11),wcss)
+    # plt.title('The Elbow Method')
+    # plt.xlabel('Number of clusters')
+    # plt.ylabel('WCSS')
+    # plt.show()
+
+    # Applying KMeans to the dataset with the optimal number of cluster
+
+    kmeans=KMeans(n_clusters= 3, init = 'k-means++', max_iter = 300, n_init = 10, random_state = 0)
+    y_kmeans = kmeans.fit_predict(X)
+
+    # Visualising the clusters
+
+    # plt.scatter(X[y_kmeans == 0, 0], X[y_kmeans == 0,1],s = 100, c='yellow', label ='Attacked Areas 1')
+
+    # plt.scatter(X[y_kmeans == 1, 0], X[y_kmeans == 1,1],s = 100, c='blue', label = 'Attacked Areas 2')
+
+    # plt.scatter(X[y_kmeans == 2, 0], X[y_kmeans == 2,1],s = 100, c='green', label = 'Attacked Areas 3')
+
+    # plt.scatter(X[y_kmeans == 3, 0], X[y_kmeans == 3,1],s = 100, c='cyan', label = 'Attacked Areas 4')
+
+    # plt.scatter(X[y_kmeans == 4, 0], X[y_kmeans == 4,1],s = 100, c='magenta', label = 'Attacked Areas 5')
+
+
+    # plt.scatter(kmeans.cluster_centers_[:,0], kmeans.cluster_centers_[:,1], s = 300, c = 'red', label = 'Hotspot Areas')
+    centers = kmeans.cluster_centers_
+    centers=centers.tolist()
+    print("Result: ",centers)
+    
+    # for x in centers:
+    #     x[1]=round(x[1],6)
+    #     lat=str(x[1])
+    #     print("latitude is   ",lat)
+    #     #print(data["latitude"])
+    #     data=data[data["longitude"].str.contains(lat)]
+    #     print(data)
+        #a=data[data['latitude'].str.contains(lat)]
+
+    # geolocator = Nominatim(user_agent="geoapiExercises")
+    # for x in centers:
+    #     print(x[0])
+    #     print(x[1])
+    #     latitude=str(x[0])
+    #     longitude=str(x[1])
+        
+    #     location=geolocator.reverse(latitude+","+longitude)
+    #     address = location.raw['address']
+    #     city = address.get('city', '')
+    #     print(location)
+    # plt.title('HotSpot Areas')
+    # plt.xlabel('Area X')
+    # plt.ylabel('Area Y')
+    # plt.legend()
+    # plt.show()
+    return HttpResponse(headers={'Result':centers})
+
+def LandmineKMean(request):
+    # filtering the rows where Credit-Rating is Fair
+    data = pd.read_csv("D:\FYP\Implementation\connectReactnativeDjango\djangobackend\globalterrorismdb_0718dist.csv",encoding='latin-1')
+    data.drop(['iyear','imonth','iday','suicide'], axis=1, inplace=True)
+    #print(data.isnull().sum()
+    data=data[data['country_txt'].str.contains('Pakistan')]
+
+    #print(data)
+    data['latitude'].fillna(data['latitude'].mean(), inplace=True)
+    data['longitude'].fillna(data['longitude'].mean(), inplace=True)
+    X = data.iloc[:,[2,3]].values
+    wcss=[]
+    for i in range (1,11):
+        kmeans = KMeans(n_clusters = i, init = 'k-means++', max_iter =300, n_init = 10, random_state = 0)
+        kmeans.fit(X)
+        wcss.append(kmeans.inertia_)
+
+    # Plot the graph to visualize the Elbow Method to find the optimal number of cluster  
+    # plt.plot(range(1,11),wcss)
+    # plt.title('The Elbow Method')
+    # plt.xlabel('Number of clusters')
+    # plt.ylabel('WCSS')
+    # plt.show()
+
+    # Applying KMeans to the dataset with the optimal number of cluster
+
+    kmeans=KMeans(n_clusters= 5, init = 'k-means++', max_iter = 300, n_init = 10, random_state = 0)
+    y_kmeans = kmeans.fit_predict(X)
+
+    # Visualising the clusters
+
+    # plt.scatter(X[y_kmeans == 0, 0], X[y_kmeans == 0,1],s = 100, c='yellow', label ='Attacked Areas 1')
+
+    # plt.scatter(X[y_kmeans == 1, 0], X[y_kmeans == 1,1],s = 100, c='blue', label = 'Attacked Areas 2')
+
+    # plt.scatter(X[y_kmeans == 2, 0], X[y_kmeans == 2,1],s = 100, c='green', label = 'Attacked Areas 3')
+
+    # plt.scatter(X[y_kmeans == 3, 0], X[y_kmeans == 3,1],s = 100, c='cyan', label = 'Attacked Areas 4')
+
+    # plt.scatter(X[y_kmeans == 4, 0], X[y_kmeans == 4,1],s = 100, c='magenta', label = 'Attacked Areas 5')
+
+
+    # plt.scatter(kmeans.cluster_centers_[:,0], kmeans.cluster_centers_[:,1], s = 300, c = 'red', label = 'Hotspot Areas')
+    centers = kmeans.cluster_centers_
+    centers=centers.tolist()
+    print("Result: ",centers)
+    
+    # for x in centers:
+    #     x[1]=round(x[1],6)
+    #     lat=str(x[1])
+    #     print("latitude is   ",lat)
+    #     #print(data["latitude"])
+    #     data=data[data["longitude"].str.contains(lat)]
+    #     print(data)
+        #a=data[data['latitude'].str.contains(lat)]
+
+    # geolocator = Nominatim(user_agent="geoapiExercises")
+    # for x in centers:
+    #     print(x[0])
+    #     print(x[1])
+    #     latitude=str(x[0])
+    #     longitude=str(x[1])
+        
+    #     location=geolocator.reverse(latitude+","+longitude)
+    #     address = location.raw['address']
+    #     city = address.get('city', '')
+    #     print(location)
+    # plt.title('HotSpot Areas')
+    # plt.xlabel('Area X')
+    # plt.ylabel('Area Y')
+    # plt.legend()
+    # plt.show()
+    return HttpResponse(headers={'Result':centers})
+
+def RiskArea(request):
+    name = request.GET.get('name')
+    print(name)
+    result=[]
+    result.append(name)
+    # filtering the rows where Credit-Rating is Fair
+    data = pd.read_csv('D:\FYP\Implementation\connectReactnativeDjango\djangobackend\globalterrorismdb_0718dist.csv', encoding='latin-1')
+    data=data[data['country_txt'].str.contains('Pakistan')]
+    success1=data['success'].sum()
+    print("total success",success1)
+    result.append(success1)
+    data["city"].fillna("Jalal", inplace = True)
+    exist = data[data['city'].str.contains(name)]
+    for CHECK in exist:
+        if not CHECK:
+            print("not found")
+        else:
+            #data=data[data['city'].str.contains("Quetta")]
+            check_nan = data['city'].isnull().sum()
+            #print("city nan values",check_nan)
+            #data['city'].fillna('Jalal')
+            data["city"].fillna("Jalal", inplace = True)
+            data=data[data['city'].str.contains(name)]
+            targeted=data['targtype1_txt'].unique()
+            gangname=data['gname'].unique()
+            weaponUsed=data['weaptype1_txt'].unique()
+            attackNature=data['attacktype1_txt'].unique()
+            successRate=(data['success'].sum()/success1)*1000
+            targeted = [x.replace('\n', '') for x in targeted]
+            print("Targets   ",targeted)
+            result.append(targeted)
+            gangname = [x.replace('\n', '') for x in gangname]
+            print("gang involved ",gangname)
+            result.append(gangname)
+            weaponUsed = [x.replace('\n', '') for x in weaponUsed]
+            print("weapon used ",weaponUsed)
+            result.append(weaponUsed)
+            attackNature = [x.replace('\n', '') for x in attackNature]
+            print("attack Nature ",attackNature)
+            result.append(attackNature)
+            print("success Rate ",successRate)
+            result.append(successRate)
+            break
+    print(result)
+    return HttpResponse(headers={'Result':result})
+
+def RiskPath(request):
+    areas = request.GET.get('areas')
+    areas = json.loads(areas)
+    print(areas)
+    
+    data = pd.read_csv('D:\FYP\Implementation\connectReactnativeDjango\djangobackend\globalterrorismdb_0718dist.csv', encoding='latin-1')
+    data=data[data['country_txt'].str.contains('Pakistan')]
+    success=data['success'].sum()
+    totalAttacks=len(data)
+    # data['latitude'].fillna(data['latitude'].mean(), inplace=True)
+    # data['longitude'].fillna(data['longitude'].mean(), inplace=True)
+    # area=[]
+    # for x in areas:
+    #     data = pd.read_csv('D:\FYP\Implementation\connectReactnativeDjango\djangobackend\globalterrorismdb_0718dist.csv', encoding='latin-1')
+    #     data=data[data['country_txt'].str.contains('Pakistan')]
+    #     lat=str(x[0])
+    #     lon=str(x[1])
+    #     data['latitude']=data['latitude'].astype(str)
+    #     data['longitude']=data['longitude'].astype(str)
+    #     data=data[data['latitude'].str.contains(lat)]
+    #     data=data[data['longitude'].str.contains(lon)]
+    #     area1=data['city'].to_list()
+    #     if(len(area1)>0):
+    #         area.append(area1[0])
+    totalPathRisk=0
+    for x in areas:
+        data = pd.read_csv('D:\FYP\Implementation\connectReactnativeDjango\djangobackend\globalterrorismdb_0718dist.csv', encoding='latin-1')
+        data=data[data['country_txt'].str.contains('Pakistan')]
+        success=data['success'].sum() 
+        totalAttacks=len(data)
+        data["city"].fillna("Jalal", inplace = True)
+        exist = data[data['city'].str.contains(x)]
+        #print(exist)
+        for CHECK in exist:
+            if not CHECK:
+                print("not found")
+            else:
+                #print(x)
+                a=data[data['city'].str.contains(x)]
+                attackOccured=len(a)
+                totalPathRisk=totalPathRisk+((attackOccured*totalAttacks)/((attackOccured*success)+(success*totalAttacks)))*10
+    print("total path risk is",totalPathRisk)
+    return HttpResponse(headers={'Result':totalPathRisk})
+    
