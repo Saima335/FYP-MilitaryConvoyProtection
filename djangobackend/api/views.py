@@ -261,7 +261,7 @@ def Detection2(request):
 
     # initialize the video stream, pointer to output video file, and
     # frame dimensions
-    vs = cv2.VideoCapture(video)
+    vs = cv2.VideoCapture("rtmp://192.168.1.128/live")
     writer = None
     (W, H) = (None, None)
     # try to determine the total number of frames in the video file
@@ -474,7 +474,7 @@ def HotspotKMean(request):
 
     # Applying KMeans to the dataset with the optimal number of cluster
 
-    kmeans=KMeans(n_clusters= 3, init = 'k-means++', max_iter = 300, n_init = 10, random_state = 0)
+    kmeans=KMeans(n_clusters= 5, init = 'k-means++', max_iter = 300, n_init = 10, random_state = 0)
     y_kmeans = kmeans.fit_predict(X)
 
     # Visualising the clusters
@@ -523,23 +523,21 @@ def HotspotKMean(request):
     return HttpResponse(headers={'Result':centers})
 
 def LandmineKMean(request):
-    # filtering the rows where Credit-Rating is Fair
-    data = pd.read_csv("D:\FYP\Implementation\connectReactnativeDjango\djangobackend\globalterrorismdb_0718dist.csv",encoding='latin-1')
-    data.drop(['iyear','imonth','iday','suicide'], axis=1, inplace=True)
+    data = pd.read_csv('D:\FYP\Implementation\connectReactnativeDjango\djangobackend\Landmineattack.csv',encoding='latin-1')
+    data.drop(['location','altitude','point'], axis=1, inplace=True)
     #print(data.isnull().sum()
-    data=data[data['country_txt'].str.contains('Pakistan')]
-
     #print(data)
     data['latitude'].fillna(data['latitude'].mean(), inplace=True)
     data['longitude'].fillna(data['longitude'].mean(), inplace=True)
-    X = data.iloc[:,[2,3]].values
-    wcss=[]
+    X = data.iloc[:,[3,4]].values
+
+    wcss =[]
     for i in range (1,11):
         kmeans = KMeans(n_clusters = i, init = 'k-means++', max_iter =300, n_init = 10, random_state = 0)
         kmeans.fit(X)
         wcss.append(kmeans.inertia_)
 
-    # Plot the graph to visualize the Elbow Method to find the optimal number of cluster  
+    # # Plot the graph to visualize the Elbow Method to find the optimal number of cluster  
     # plt.plot(range(1,11),wcss)
     # plt.title('The Elbow Method')
     # plt.xlabel('Number of clusters')
@@ -551,7 +549,7 @@ def LandmineKMean(request):
     kmeans=KMeans(n_clusters= 5, init = 'k-means++', max_iter = 300, n_init = 10, random_state = 0)
     y_kmeans = kmeans.fit_predict(X)
 
-    # Visualising the clusters
+    # # Visualising the clusters
 
     # plt.scatter(X[y_kmeans == 0, 0], X[y_kmeans == 0,1],s = 100, c='yellow', label ='Attacked Areas 1')
 
@@ -566,34 +564,15 @@ def LandmineKMean(request):
 
     # plt.scatter(kmeans.cluster_centers_[:,0], kmeans.cluster_centers_[:,1], s = 300, c = 'red', label = 'Hotspot Areas')
     centers = kmeans.cluster_centers_
-    centers=centers.tolist()
-    print("Result: ",centers)
-    
-    # for x in centers:
-    #     x[1]=round(x[1],6)
-    #     lat=str(x[1])
-    #     print("latitude is   ",lat)
-    #     #print(data["latitude"])
-    #     data=data[data["longitude"].str.contains(lat)]
-    #     print(data)
-        #a=data[data['latitude'].str.contains(lat)]
 
-    # geolocator = Nominatim(user_agent="geoapiExercises")
-    # for x in centers:
-    #     print(x[0])
-    #     print(x[1])
-    #     latitude=str(x[0])
-    #     longitude=str(x[1])
-        
-    #     location=geolocator.reverse(latitude+","+longitude)
-    #     address = location.raw['address']
-    #     city = address.get('city', '')
-    #     print(location)
     # plt.title('HotSpot Areas')
     # plt.xlabel('Area X')
     # plt.ylabel('Area Y')
     # plt.legend()
     # plt.show()
+
+    centers=centers.tolist()
+    print("Result: ",centers)
     return HttpResponse(headers={'Result':centers})
 
 def RiskArea(request):
@@ -685,4 +664,6 @@ def RiskPath(request):
                 totalPathRisk=totalPathRisk+((attackOccured*totalAttacks)/((attackOccured*success)+(success*totalAttacks)))*10
     print("total path risk is",totalPathRisk)
     return HttpResponse(headers={'Result':totalPathRisk})
-    
+
+def Live(request):
+    return "Done"

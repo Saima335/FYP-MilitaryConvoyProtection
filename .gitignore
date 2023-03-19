@@ -4,6 +4,8 @@ reactnativeapp/
 djangobackend/Frames/
 djangobackend/FramesInput/
 djangobackend/FramesOutput/
+djangobackend/FramesInput2/
+djangobackend/FramesOutput3/
 djangobackend/yolov3.cfg
 djangobackend/yolov3.weights
 djangobackend/resnet50_csv_60-converted.h5

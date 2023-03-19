@@ -16,6 +16,7 @@ import {
 } from 'react-native';
 import AppTab from '../navigation/appTab';
 import { NavigationContainer } from '@react-navigation/native';
+import { useIsFocused } from '@react-navigation/native';
 
 import {useCameraDevices, Camera} from 'react-native-vision-camera';
 
@@ -25,6 +26,7 @@ const ArScreen = ({ navigation }) => {
 
     const devices = useCameraDevices();
     const device = devices.back;
+    const isFocused = useIsFocused();
 
     React.useEffect(() => {
         checkCameraPermission();
@@ -67,7 +69,7 @@ const ArScreen = ({ navigation }) => {
           return (
             <View style={{ flex: 1 }}>
               {device != null &&
-                hasPermission && (
+                hasPermission && isFocused && (
                   <>
                     <Camera
                       style={StyleSheet.absoluteFill}

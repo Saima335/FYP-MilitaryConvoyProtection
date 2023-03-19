@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import Geocoder from 'react-native-geocoding';
 import Geolocation from 'react-native-geolocation-service';
+import database from '@react-native-firebase/database';
 
 import {
     SafeAreaView,
@@ -23,8 +24,15 @@ import MapView, { PROVIDER_GOOGLE, Marker, Polyline, AnimatedRegion, Overlay } f
 
 import MapViewDirections from 'react-native-maps-directions';
 import Video from 'react-native-video';
+// import { VLCPlayer, VlCPlayerView } from 'react-native-vlc-media-player';
+import { NodePlayerView } from 'react-native-nodemediaclient';
 
 const MainScreen = ({ navigation, route }) => {
+
+    const [count, setCount] = useState(0);
+
+    const [riskdone, setRiskdone] = useState(false);
+
     const [marker, setMarker] = useState({});
     const [curr, setCurr] = useState({});
     const [coordinate, setCoordinate] = useState({});
@@ -41,6 +49,8 @@ const MainScreen = ({ navigation, route }) => {
             longitude: 68.3451,
         }, title: "Another in Pakistan", description: "Marker Showed again"
     }];
+
+    const [coordinateDrone, setCoordinateDrone] = useState({ latitude: 0, longitude: 0 });
 
     // const sourceCoordinates = {
     //     latitude: Math.round(JSON.parse(route.params.sourceCoordinates).lat * 10000) / 10000,
@@ -166,6 +176,43 @@ const MainScreen = ({ navigation, route }) => {
         }
     };
 
+    const video = 'persondrone.mp4';
+
+
+    const humanDetection = async (areas) => {
+        try {
+            // console.log("Inside Human Detection");
+            const response = await fetch(
+                'http://localhost:8000/api/detect2/?video=' + video,
+            );
+            const objperson = await JSON.parse(JSON.stringify(response));
+            console.log("Result from api: ", objperson.headers.map.person);
+            if (objperson.headers.map.person) {
+                let latitudefirebase=0;
+                let longitudefirebase=0;
+                const reference = database().ref('/recent');
+                reference.on('value', snapshot => {
+                    snapshot.forEach((snap) => {
+                        latitudefirebase=snap.val().latitude;
+                        longitudefirebase=snap.val().longitude;
+                        return true;
+                    });
+                    console.log(latitudefirebase, "   ", longitudefirebase);
+                    setCoordinateDrone({ latitude: latitudefirebase, longitude: longitudefirebase});
+                    // console.log('User data: ', snapshot.val());
+                });
+                alert("Person Found");
+            }
+            else{
+                setCoordinateDrone({ latitude: 0, longitude: 0 });
+                // alert("Person Not Found");
+            }
+            // return Number(objperson.headers.map.person);
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
     React.useEffect(() => {
         setCoordinate(new AnimatedRegion({
             latitude: 33.6844,
@@ -245,9 +292,10 @@ const MainScreen = ({ navigation, route }) => {
                 `https://maps.googleapis.com/maps/api/directions/json?origin=${source}&destination=${destination}&key=${API_KEY}&sensor=false&alternatives=true`,
             );
             const json = await response.json();
+            console.log("No of Routes: ", json.routes.length);
             console.log(json);
             setRoutes(json.routes);
-            console.log("No of Routes: ", json.routes.length);
+            
             json.routes &&
                 json.routes.length &&
                 json.routes.forEach((route, index) => {
@@ -269,8 +317,8 @@ const MainScreen = ({ navigation, route }) => {
                 })
             })
             console.log(".......", multiDirectionPolygonArray);
-            var areasall=[];
-            multiDirectionPolygonArray.forEach( (marker, index) => {
+            var areasall = [];
+            multiDirectionPolygonArray.forEach((marker, index) => {
                 var areas = [];
                 var ai = 0;
                 marker.forEach((mrk, i) => {
@@ -292,24 +340,27 @@ const MainScreen = ({ navigation, route }) => {
                 console.log("Areas to pass: ", areas);
                 areasall.push(areas);
             });
-            for (var z=0;z<areasall.length;z++) {
-                for (var y=0;y<areasall[z].length;y++) {
-                    const response = await Geocoder.from(areasall[z][y][0], areasall[z][y][1]);
-                    var addressComponent = response.results[0].address_components[1]?.long_name;
-                    if (addressComponent) {
-                        console.log("latLng Geocoder", addressComponent);
-                        areasall[z][y] = addressComponent;
-                    }
-                }
-            }
-            // areasall=[['Islamabad', 'Islamabad', 'H-9', 'شاہراہ کشمیر،', 'Islamabad', 'Shaheenabad', 'Shaheenabad', 'Band Road', 'Gulfishan Colony', 'Lahore', 'Multan Road', 'Chauburji Chowk', 'Saadi Park', 'Saadi Park', 'Mozang Chungi', 'Jubilee Town', 'MRC', 'Main Gulberg', 'Main Gulberg', 'Block K', 'Mushtaq Ahmed Gurmani Road', 'Gurumangat Road'],['Islamabad', 'Islamabad', 'G-9/4', 'Service Road East G 9', 'Service Road East G 9', 'G 8/2', '4/C', 'G 8/1', 'فیصل ایونیو', 'G-7/1', 'Islamabad', 'Kallar Syedan Road', 'Bhalot Link Road', 'Jhelum Cantt', 'Grand Trunk Road', 'National Highway 5', 'National Highway 5', 'Kala Shah Kaku', 'Balkhay', 'Lakhodher', 'Cantt', 'GCQG 8JW', 'Aziz Bhatti Road', 'Cantt', 'Cantt', 'Sarwar Colony', 'CMA Colony',
-            // 'Millat Colony', 'Gurumangat Road']];
-            for (var z=0;z<areasall.length;z++) {
-                riskpath[z]=await getRiskPathFromApiAsync(JSON.stringify(areasall[z]));
+            // for (var z=0;z<areasall.length;z++) {
+            //     for (var y=0;y<areasall[z].length;y++) {
+            //         const response = await Geocoder.from(areasall[z][y][0], areasall[z][y][1]);
+            //         var addressComponent = response.results[0].address_components[1]?.long_name;
+            //         if (addressComponent) {
+            //             console.log("latLng Geocoder", addressComponent);
+            //             areasall[z][y] = addressComponent;
+            //         }
+            //     }
+            // }
+            areasall = [['Islamabad', 'Islamabad', 'H-9', 'شاہراہ کشمیر،', 'Islamabad', 'Shaheenabad', 'Shaheenabad', 'Band Road', 'Gulfishan Colony', 'Lahore', 'Multan Road', 'Chauburji Chowk', 'Saadi Park', 'Saadi Park', 'Mozang Chungi', 'Jubilee Town', 'MRC', 'Main Gulberg', 'Main Gulberg', 'Block K', 'Mushtaq Ahmed Gurmani Road', 'Gurumangat Road'], ['Islamabad', 'Islamabad', 'G-9/4', 'Service Road East G 9', 'Service Road East G 9', 'G 8/2', '4/C', 'G 8/1', 'فیصل ایونیو', 'G-7/1', 'Islamabad', 'Kallar Syedan Road', 'Bhalot Link Road', 'Jhelum Cantt', 'Grand Trunk Road', 'National Highway 5', 'National Highway 5', 'Kala Shah Kaku', 'Balkhay', 'Lakhodher', 'Cantt', 'GCQG 8JW', 'Aziz Bhatti Road', 'Cantt', 'Cantt', 'Sarwar Colony', 'CMA Colony',
+                'Millat Colony', 'Gurumangat Road']];
+            for (var z = 0; z < areasall.length; z++) {
+                riskpath[z] = await getRiskPathFromApiAsync(JSON.stringify(areasall[z]));
             }
             setRisk(riskpath);
             var riskpath1 = [...riskpath].sort(function (a, b) { return a - b });
             console.log("Risk of the paths: ", riskpath[0], "     ", riskpath[1]);
+            
+            setRiskdone(true);
+            setCoordinateDrone({ latitude: 0, longitude: 0 });
             for (var k = 0; k < riskpath1.length; k++) {
                 var index = riskpath.indexOf(riskpath1[k]);
                 riskpath[index] = getRandomColor[k];
@@ -327,9 +378,14 @@ const MainScreen = ({ navigation, route }) => {
         }
     };
 
+
+
     React.useEffect(() => {
-        getRoutesFromApiAsync();
-    }, [])
+        console.log("Risk Done: ", riskdone);
+        if(riskdone){
+            humanDetection();
+        }
+    },[coordinateDrone]);
     return (
         <View>
             <MapView
@@ -352,6 +408,8 @@ const MainScreen = ({ navigation, route }) => {
                 /> */}
                 <Marker.Animated coordinate={coordinate} ref={markerRef} />
                 <Marker coordinate={destinationCoordinates} />
+                {coordinateDrone.latitude != 0 ?
+                    (<Marker coordinate={coordinateDrone} title="Human Detected" />) : (<View></View>)}
                 {mapRef.current?.fitToCoordinates([curr, destinationCoordinates], { edgePadding })}
                 {arr &&
                     arr.map((marker, index) =>
@@ -435,13 +493,30 @@ const MainScreen = ({ navigation, route }) => {
             <View style={{ flexDirection: "row", position: 'absolute', bottom: 50, }}>
                 {risk.map(r => (<Text style={{ color: "black" }}>{r + "     "}</Text>))}
             </View>
-            <Video
-                source={require('./persondrone.mp4')}
+            {/* require('./persondrone.mp4') */}
+            {/* <Video
+                source={{uri: 'rtmp://192.168.10.6/live'}}
                 shouldPlay={true}
                 resizeMode="cover"
                 style={{ position: 'absolute', width: 250, height: 200 }}
                 isMuted={true}
+            /> */}
+            {/* <VLCPlayer
+                style={{ position: 'absolute', width: 250, height: 200 }}
+                videoAspectRatio="16:9"
+                source={{ uri: "https://www.radiantmediaplayer.com/media/big-buck-bunny-360p.mp4" }}
+            /> */}
+
+            <NodePlayerView
+                style={{ position: 'absolute', width: 250, height: 200 }}
+                ref={(vp) => { this.vp = vp }}
+                inputUrl={"rtmp://192.168.1.128/live"}
+                scaleMode={"ScaleAspectFit"}
+                bufferTime={300}
+                maxBufferTime={1000}
+                autoplay={true}
             />
+
         </View>
     );
 }

@@ -1,4 +1,4 @@
-import React ,{useRef} from 'react';
+import React, { useRef } from 'react';
 import {
   View,
   Text,
@@ -6,9 +6,10 @@ import {
   SafeAreaView,
   StyleSheet,
   StatusBar,
+  Image,
 } from 'react-native';
 
-import MapView, { PROVIDER_GOOGLE, Marker, Polyline, AnimatedRegion,Circle } from 'react-native-maps';
+import MapView, { PROVIDER_GOOGLE, Marker, Polyline, AnimatedRegion, Circle } from 'react-native-maps';
 
 const LandmineScreen = ({ navigation }) => {
 
@@ -41,7 +42,7 @@ const LandmineScreen = ({ navigation }) => {
         'http://localhost:8000/api/landminekmean/',
       );
       const objperson = await JSON.parse(JSON.stringify(response));
-      var result=JSON.parse(objperson.headers.map.result);
+      var result = JSON.parse(objperson.headers.map.result);
       console.log(result);
       setCoordinate(result);
       // console.log("coordinates: ",coordinate);
@@ -53,7 +54,7 @@ const LandmineScreen = ({ navigation }) => {
 
   React.useEffect(() => {
     getLandmineFromApiAsync();
-  },[])
+  }, [])
 
   return (
     <>
@@ -78,15 +79,19 @@ const LandmineScreen = ({ navigation }) => {
               title={marker.title}
               description={marker.description} />
           ))} */}
-          {coordinate.length?coordinate.map((coor, index) => (
-          <Circle
-            center={{ latitude: coor[0], longitude: coor[1] }}
-            radius={10000}
-            strokeColor="red"
-            strokeWidth={2}
-            fillColor="red"
-          />
-          )):(<View></View>)}
+          {coordinate.length ? coordinate.map((coor, index) => (
+            <Marker
+              coordinate={{
+                latitude: coor[0], longitude: coor[1],
+              }}
+            >
+
+              <Image source={require('../images/redflag1.png')} style={{ height: 35, width: 35 }} />
+              {/* <Image source={{ uri: 'https://i.pinimg.com/originals/9d/58/37/9d5837c6f0cb8b18be6ddd1e2742472a.gif' }} style={{ height: 35, width: 35 }} /> */}
+
+            </Marker>
+
+          )) : (<View></View>)}
         </MapView>
         {/* <View style={styles.ButtonArea}>
             <TouchableOpacity style={styles.Button} onPress={() => this._goToMyPosition(44.7866, 20.4489)}>

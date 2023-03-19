@@ -1,0 +1,127 @@
+{
+  "project_info": {
+    "project_number": "219390753640",
+    "firebase_url": "https://finalproject-5878a-default-rtdb.firebaseio.com",
+    "project_id": "finalproject-5878a",
+    "storage_bucket": "finalproject-5878a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:219390753640:android:11c198b8127632826174dd",
+        "android_client_info": {
+          "package_name": "com.awesomeproject"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "219390753640-0ckbjmbvd1r6d2cohkvdt4p7bv958531.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCo48QHyXSm2SYkf0Nw_3Z7BTztY_37e_0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "219390753640-0ckbjmbvd1r6d2cohkvdt4p7bv958531.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:219390753640:android:8d47427b6871e2c16174dd",
+        "android_client_info": {
+          "package_name": "com.dji.sdk.sample"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "219390753640-0ckbjmbvd1r6d2cohkvdt4p7bv958531.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCo48QHyXSm2SYkf0Nw_3Z7BTztY_37e_0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "219390753640-0ckbjmbvd1r6d2cohkvdt4p7bv958531.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:219390753640:android:9df723dc97ddc8f76174dd",
+        "android_client_info": {
+          "package_name": "com.foodpanda.finalProject"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "219390753640-0ckbjmbvd1r6d2cohkvdt4p7bv958531.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCo48QHyXSm2SYkf0Nw_3Z7BTztY_37e_0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "219390753640-0ckbjmbvd1r6d2cohkvdt4p7bv958531.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:219390753640:android:30d551be66685ed16174dd",
+        "android_client_info": {
+          "package_name": "com.googlemapreacttest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "219390753640-0ckbjmbvd1r6d2cohkvdt4p7bv958531.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCo48QHyXSm2SYkf0Nw_3Z7BTztY_37e_0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "219390753640-0ckbjmbvd1r6d2cohkvdt4p7bv958531.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

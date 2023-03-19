@@ -6,6 +6,7 @@ import {
   SafeAreaView,
   StyleSheet,
   StatusBar,
+  Image,
 } from 'react-native';
 
 import MapView, { PROVIDER_GOOGLE, Marker, Polyline, AnimatedRegion, Polygon, Circle } from 'react-native-maps';
@@ -218,13 +219,23 @@ const HotSpotScreen = ({ navigation }) => {
           {/* {mapRef.current?.fitToCoordinates([coordinate[0][0], coordinate[0][1]], { edgePadding })} */}
           
           {coordinate.length?coordinate.map((coor, index) => (
-          <Circle
-            center={{ latitude: coor[0], longitude: coor[1] }}
-            radius={10000}
-            strokeColor="red"
-            strokeWidth={2}
-            fillColor="red"
-          />
+             <Marker
+             coordinate={{
+               latitude: coor[0], longitude: coor[1],
+             }}
+           >
+
+             {/* <Image source={require('../images/redflag1.png')} style={{ height: 35, width: 35 }} /> */}
+             <Image source={{ uri: 'https://i.gifer.com/origin/a0/a07ad08920f303f655251b1a0b353b86_w200.gif' }} style={{ height: 35, width: 35 }} />
+
+           </Marker>
+          // <Circle
+          //   center={{ latitude: coor[0], longitude: coor[1] }}
+          //   radius={10000}
+          //   strokeColor="red"
+          //   strokeWidth={2}
+          //   fillColor="red"
+          // />
           )):(<View></View>)}
           {/* {coordinate.length?coordinate.map((coor, index) => (
             <Polygon
